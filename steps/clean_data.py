@@ -7,10 +7,10 @@ from typing_extensions import Annotated
 
 @step
 def clean_df(df: pd.DataFrame) -> Tuple[
-    Annotated[pd.DataFrame, "X Train"],
-    Annotated[pd.DataFrame, "X Test"],
-    Annotated[pd.Series, "y Train"],
-    Annotated[pd.Series, "y Test"]
+    Annotated[pd.DataFrame, "X_train"],
+    Annotated[pd.DataFrame, "X_test"],
+    Annotated[pd.Series, "y_train"],
+    Annotated[pd.Series, "y_test"],
 ]:
     """
     Cleans the data and divides it into train and test.
@@ -24,14 +24,24 @@ def clean_df(df: pd.DataFrame) -> Tuple[
         y_test: Testing labels
     """
     try:
-        process_strategy = DataPreProcessStrategy()
-        data_cleaning = DataCleaning(df, process_strategy)
-        processed_data = data_cleaning.handle_data()
+        preprocessor = DataCleaning(df, DataPreProcessStrategy())
+        processed_data = preprocessor.handle_data()
 
-        divide_strtegy = DataDivideStrategy()
-        data_cleaning = DataCleaning(processed_data, divide_strtegy)
-        X_train, X_test, y_train, y_test = data_cleaning.handle_data()
-        logging.info("Data cleaning completed.")
+        logging.info(f"Processed data shape: {processed_data.shape}")
+
+        # Train-test split step
+        splitter = DataCleaning(processed_data, DataDivideStrategy())
+        X_train, X_test, y_train, y_test = splitter.handle_data()
+        logging.info(f"X_train type: {type(X_train)}, y_train type: {type(y_train)}")
+        logging.info(f"y_train.columns (if DF): {getattr(y_train, 'columns', 'Series')}")
+        if isinstance(y_train, pd.DataFrame):
+            y_train = y_train.squeeze()
+        if isinstance(y_test, pd.DataFrame):
+            y_test = y_test.squeeze()
+        
+
+        logging.info("Data cleaning and splitting completed successfully.")
+        return X_train, X_test, y_train, y_test
     except Exception as e:
         logging.error(f"Error in cleaning data: {e}")
         raise e
