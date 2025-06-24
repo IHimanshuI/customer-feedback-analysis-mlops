@@ -1,6 +1,8 @@
-from zenml.steps import BaseParameters
+# from zenml.steps import BaseParameters
+from zenml.config.base_settings import BaseSettings
 
-class ModelNameConfig(BaseParameters):
+
+class ModelNameConfig(BaseSettings):
     """
     Configuration for the model name.
     """

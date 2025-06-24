@@ -18,7 +18,7 @@ class DataPreProcessStrategy(DataStrategy):
     Strategy for preprocessing data.
     """
     
-    def handle_data(self, dataa: pd.DataFrame) -> pd.DataFrame:
+    def handle_data(self, data: pd.DataFrame) -> pd.DataFrame:
         """
         Preprocess data
         """
@@ -38,7 +38,11 @@ class DataPreProcessStrategy(DataStrategy):
             data['product_width_cm'].fillna(data['product_width_cm'].median(), inplace=True)
             data['review_comment_message'].fillna('No review', inplace=True)
 
+            # Keep review_score before dropping non-numeric
+            review_score = data['review_score'] if 'review_score' in data.columns else None
             data = data.select_dtypes(include=[np.number])
+            if review_score is not None:
+                data['review_score'] = review_score
             cols_to_drop = ['customer_zip_code_prefix','order_item_id']
             data = data.drop(cols_to_drop,axis=1)
             return data

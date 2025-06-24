@@ -22,7 +22,7 @@ class Model(ABC):
 
         pass
 
-class LineraRegressionModel(Model):
+class LinearRegressionModel(Model):
     """
     Linear Regression model.
     """
@@ -41,6 +41,7 @@ class LineraRegressionModel(Model):
             reg = LinearRegression(**kwargs)
             reg.fit(X_train, y_train)
             logging.info("Model trained successfully.")
+            return reg
         except Exception as e:
             logging.error(f"Error in training model: {e}")
             raise e
