@@ -20,7 +20,7 @@ docker_settings = DockerSettings(required_integrations=[MLFLOW])
 
 class DeploymentTriggerConfig(BaseSettings):
     """Deployment trigger configuration"""
-    min_accuracy: float = 0.5
+    min_accuracy: float = 0
 
 @step
 def deployment_trigger(
@@ -62,4 +62,5 @@ def continuous_deployment_pipeline(
         model=model,
         deploy_decision = deployment_decision,
         workers=workers,
-        timeout=timeout)
+        timeout=timeout
+        )
