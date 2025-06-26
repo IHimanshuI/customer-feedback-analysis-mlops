@@ -1,46 +1,60 @@
-import logging 
-import pandas as pd
-from zenml import step
-from src.evaluation import MSE, R2, RMSE
-from sklearn.base import RegressorMixin
-from typing import Tuple
-from typing_extensions import Annotated
+import logging
+
 import mlflow
+import numpy as np
+import pandas as pd
+from model.evaluation import MSE, RMSE, R2Score
+from sklearn.base import RegressorMixin
+from typing_extensions import Annotated
+from zenml import step
 from zenml.client import Client
 
-experiment_tracker = Client().active_stack.experiment_tracker
+# experiment_tracker = Client().active_stack.experiment_tracker
+from typing import Tuple
 
 
-@step(experiment_tracker=experiment_tracker.name)
-def evaluate_model(
-    model: RegressorMixin,
-    X_test: pd.DataFrame,
-    y_test: pd.Series
-) -> Tuple[
-    Annotated[float, "R2 Score"],
-    Annotated[float, "RMSE Score"]
-]:
+@step()
+def evaluation(
+    model: RegressorMixin, x_test: pd.DataFrame, y_test: pd.Series
+) -> Tuple[Annotated[float, "r2_score"], Annotated[float, "rmse"]]:
+
     """
-    Evaluates the model on the ingested data.
     Args:
-        df: the ingested data
+        model: RegressorMixin
+        x_test: pd.DataFrame
+        y_test: pd.Series
+    Returns:
+        r2_score: float
+        rmse: float
     """
     try:
-            
-        predictions = model.predict(X_test)
+        # prediction = model.predict(x_test)
+        # evaluation = Evaluation()
+        # r2_score = evaluation.r2_score(y_test, prediction)
+        # mlflow.log_metric("r2_score", r2_score)
+        # mse = evaluation.mean_squared_error(y_test, prediction)
+        # mlflow.log_metric("mse", mse)
+        # rmse = np.sqrt(mse)
+        # mlflow.log_metric("rmse", rmse)
+
+        prediction = model.predict(x_test)
+
+        # Using the MSE class for mean squared error calculation
         mse_class = MSE()
-        mse_score = mse_class.calculate_scores(y_test, predictions)
-        mlflow.log_metric("mse", mse_score)
-        r2_class = R2()
-        r2_score = r2_class.calculate_scores(y_test, predictions)
+        mse = mse_class.calculate_score(y_test, prediction)
+        mlflow.log_metric("mse", mse)
+
+        # Using the R2Score class for R2 score calculation
+        r2_class = R2Score()
+        r2_score = r2_class.calculate_score(y_test, prediction)
         mlflow.log_metric("r2_score", r2_score)
-        rmse = RMSE()
-        rmse_score = rmse.calculate_scores(y_test, predictions)
-        mlflow.log_metric("rmse", rmse_score)
-        # acc = Accuracy()
-        # accuracy_score = acc.calculate_scores(y_test, predictions)
+
+        # Using the RMSE class for root mean squared error calculation
+        rmse_class = RMSE()
+        rmse = rmse_class.calculate_score(y_test, prediction)
+        mlflow.log_metric("rmse", rmse)
         
-        return r2_score , rmse_score
+        return r2_score, rmse
     except Exception as e:
-        logging.error(f"Error in evaluating model: {e}")
+        logging.error(e)
         raise e

@@ -3,7 +3,7 @@ from zenml.config.base_settings import BaseSettings
 
 
 class ModelNameConfig(BaseSettings):
-    """
-    Configuration for the model name.
-    """
-    model_name: str = "LinearRegression"
+    """Model Configurations"""
+
+    model_name: str = "lightgbm"
+    fine_tuning: bool = False

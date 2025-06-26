@@ -1,78 +1,89 @@
 import logging
 from abc import ABC, abstractmethod
+
 import numpy as np
-from sklearn.metrics import mean_squared_error, r2_score, accuracy_score
+from sklearn.metrics import mean_squared_error, r2_score
+
 
 class Evaluation(ABC):
     """
-    Abstract class defing strategy for evaluation our model
+    Abstract Class defining the strategy for evaluating model performance
     """
     @abstractmethod
-    def calculate_scores(self, y_true: np.ndarray, y_pred: np.ndarray):
-        """
-        Calculate evaluation scores.
-        
-        Args:
-            y_true: True labels
-            y_pred: Predicted labels
-        Returns:
-            None
-        """
+    def calculate_score(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         pass
+
 
 class MSE(Evaluation):
     """
-    Evaluation strategy for calculating Mean Squared Error (MSE).
+    Evaluation strategy that uses Mean Squared Error (MSE)
     """
-    def calculate_scores(self, y_true: np.ndarray, y_pred: np.ndarray):
+    def calculate_score(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+        """
+        Args:
+            y_true: np.ndarray
+            y_pred: np.ndarray
+        Returns:
+            mse: float
+        """
         try:
-            logging.info('Calculating MSE.')
+            logging.info("Entered the calculate_score method of the MSE class")
             mse = mean_squared_error(y_true, y_pred)
-            logging.info(f"Error in calculation MSE: {mse}")
+            logging.info("The mean squared error value is: " + str(mse))
             return mse
         except Exception as e:
-            logging.error(f"Error in calculating MSE: {e}")
+            logging.error(
+                "Exception occurred in calculate_score method of the MSE class. Exception message:  "
+                + str(e)
+            )
             raise e
-        
-class R2(Evaluation):
+
+
+class R2Score(Evaluation):
     """
-    Evaluation strategy for calculating R-squared (R2).
+    Evaluation strategy that uses R2 Score
     """
-    def calculate_scores(self, y_true: np.ndarray, y_pred: np.ndarray):
+    def calculate_score(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+        """
+        Args:
+            y_true: np.ndarray
+            y_pred: np.ndarray
+        Returns:
+            r2_score: float
+        """
         try:
-            logging.info('Calculating R2.')
+            logging.info("Entered the calculate_score method of the R2Score class")
             r2 = r2_score(y_true, y_pred)
-            logging.info(f"Error in calculation R2: {r2}")
+            logging.info("The r2 score value is: " + str(r2))
             return r2
         except Exception as e:
-            logging.error(f"Error in calculating R2: {e}")
+            logging.error(
+                "Exception occurred in calculate_score method of the R2Score class. Exception message:  "
+                + str(e)
+            )
             raise e
-        
+
+
 class RMSE(Evaluation):
     """
-    Evaluation strategy for calculating Root Mean Squared Error (RMSE).
+    Evaluation strategy that uses Root Mean Squared Error (RMSE)
     """
-    def calculate_scores(self, y_true: np.ndarray, y_pred: np.ndarray):
+    def calculate_score(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+        """
+        Args:
+            y_true: np.ndarray
+            y_pred: np.ndarray
+        Returns:
+            rmse: float
+        """
         try:
-            logging.info('Calculating RMSE.')
+            logging.info("Entered the calculate_score method of the RMSE class")
             rmse = np.sqrt(mean_squared_error(y_true, y_pred))
-            logging.info(f"Error in calculation RMSE: {rmse}")
+            logging.info("The root mean squared error value is: " + str(rmse))
             return rmse
         except Exception as e:
-            logging.error(f"Error in calculating RMSE: {e}")
+            logging.error(
+                "Exception occurred in calculate_score method of the RMSE class. Exception message:  "
+                + str(e)
+            )
             raise e
-        
-# class Accuracy(Evaluation):
-#     """
-#     Evaluation strategy for calculating accuracy.
-#     """
-#     def calculate_scores(self, y_true: np.ndarray, y_pred: np.ndarray):
-#         try:
-#             logging.info('Calculating Accuracy.')
-#             accuracy = (np.sum(y_true == y_pred))/ len(y_true)
-#             logging.info(f"Accuracy: {accuracy}")
-#             return accuracy
-#         except Exception as e:
-#             logging.error(f"Error in calculating Accuracy: {e}")
-#             raise e
-        
