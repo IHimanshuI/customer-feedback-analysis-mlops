@@ -5,6 +5,9 @@ from model.data_cleaning import DataCleaning, DataPreprocessStrategy
 
 
 def get_data_for_test():
+    """
+    Function to get data for testing purposes.
+    """
     try:
         df = pd.read_csv("./data/olist_customers_dataset.csv")
         df = df.sample(n=100)
